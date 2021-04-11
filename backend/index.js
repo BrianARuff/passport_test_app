@@ -8,7 +8,9 @@ const bcrypt = require("bcryptjs");
 const expressSession = require("express-session");
 const helmet = require("helmet");
 const morgan = require("morgan");
+const uuid = require("uuid");
 const { database } = require("./database/database");
+const e = require("express");
 
 const server = express();
 server.use(helmet());
@@ -41,8 +43,27 @@ server.post("/login", (req, res) => {
 });
 
 server.post("/register", (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
+  const hashedPsw = bcrypt.hashSync(req.body.password, 10);
+  database.query(
+    `select * from users where users.username = $1;`,
+    [req.body.username],
+    (err, table) => {
+      if (err) return res.json(err);
+      if (table.rowCount === 0) {
+        database
+          .query(
+            "insert into users (username, password, email) values ($1, $2, $3) returning *",
+            [req.body.username, hashedPsw, req.body.email]
+          )
+          .then((t) => {
+            res.json(t.rows[0]);
+          })
+          .catch((err) => res.json(err.detail));
+      } else {
+        return res.json({ message: "User already exists" });
+      }
+    }
+  );
 });
 
 server.get("/user", (req, res) => {
