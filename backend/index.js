@@ -9,8 +9,7 @@ const expressSession = require("express-session");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const uuid = require("uuid");
-const { database } = require("./database/database");
-const e = require("express");
+const { database } = require("./database/database").database;
 
 const server = express();
 server.use(helmet());
@@ -25,6 +24,9 @@ server.use(
   })
 );
 server.use(cookieParser(process.env.SECRET));
+server.use(passport.initialize());
+server.use(passport.session());
+require("./passportConfig")(passport);
 
 server.get("/", (req, res) => {
   database.query("select * from users;", (err, table) => {
@@ -37,10 +39,14 @@ server.get("/", (req, res) => {
   });
 });
 
-server.post("/login", (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
-});
+server.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
 
 server.post("/register", (req, res) => {
   const hashedPsw = bcrypt.hashSync(req.body.password, 10);
