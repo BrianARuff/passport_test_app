@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useCookies } from "react-cookie";
 
 type IUserData = {
   username: string;
   password: string;
-  email: string;
 };
 
-function RegisterUser() {
+function LoginUser() {
   const [userData, setUserData] = useState<IUserData>({
     username: "",
     password: "",
-    email: "",
   });
+  const [, setCookie] = useCookies(["user"]);
 
   function handleUserData(e: React.BaseSyntheticEvent) {
     setUserData(() => ({ ...userData, [e.target.name]: e.target.value }));
@@ -20,11 +20,21 @@ function RegisterUser() {
 
   function handleSubmitUserData(e: React.BaseSyntheticEvent) {
     e.preventDefault();
-    console.log("handle regUser");
+    axios({
+      method: "POST",
+      data: { ...userData },
+      withCredentials: true,
+      url: "http://localhost:4000/login",
+    })
+      .then((res) => {
+        const { username, email, id } = res.data;
+        setCookie("user", { username, email, id });
+      })
+      .catch((err) => console.error(err));
   }
   return (
     <form>
-      <h4>Register</h4>
+      <h4>Login</h4>
       <input
         name="username"
         type="text"
@@ -39,16 +49,9 @@ function RegisterUser() {
         onChange={handleUserData}
         required
       />
-      <input
-        type="email"
-        name="email"
-        placeholder="email"
-        onChange={handleUserData}
-        required
-      />
-      <button onClick={handleSubmitUserData}>Register User</button>
+      <button onClick={handleSubmitUserData}>Login User</button>
     </form>
   );
 }
 
-export default RegisterUser;
+export default LoginUser;

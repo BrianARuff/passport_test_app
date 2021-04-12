@@ -1,19 +1,19 @@
-import "./App.css";
-import GetUser from "./GetUser";
-import LoginUser from "./LoginUser";
-import RegisterUser from "./RegisterUser";
+import React from "react";
+import GetUser from "./GetUser/GetUser";
+import LoginUser from "./LoginUser/LoginUser";
+import LogoutButton from "./Logout/Logout";
+import NavBar from "./NavBar/NavBar";
+import RegisterUser from "./RegisterUser/RegisterUser";
 
 function App() {
   return (
-    <div className="App">
-      <hr />
+    <>
+      <NavBar />
       <RegisterUser />
-      <hr />
       <LoginUser />
-      <hr />
       <GetUser />
-      <hr />
-    </div>
+      <LogoutButton />
+    </>
   );
 }
 
