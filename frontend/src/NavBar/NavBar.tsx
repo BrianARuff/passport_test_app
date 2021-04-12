@@ -21,7 +21,9 @@ export default function NavBar() {
             <MenuIcon />
           </IconButton>
           <Typography style={{ flex: "1", margin: "0 auto" }} variant="h6">
-            News
+            <RouteLink style={{ textDecoration: "none", color: "#fff" }} to="/">
+              News
+            </RouteLink>
           </Typography>
           <Button color="inherit">
             <Link color="inherit" to="/login" component={RouteLink}>
