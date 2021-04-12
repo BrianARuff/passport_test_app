@@ -9,7 +9,7 @@ type IUserData = {
   email: string;
 };
 
-function RegisterUser() {
+function RegisterUser(props: any) {
   const [userData, setUserData] = useState<IUserData>({
     username: "",
     password: "",

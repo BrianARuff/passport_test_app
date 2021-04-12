@@ -1,18 +1,14 @@
-import React from "react";
-import GetUser from "./GetUser/GetUser";
 import LoginUser from "./LoginUser/LoginUser";
-import LogoutButton from "./Logout/Logout";
 import NavBar from "./NavBar/NavBar";
 import RegisterUser from "./RegisterUser/RegisterUser";
+import { Route } from "react-router";
 
 function App() {
   return (
     <>
       <NavBar />
-      <RegisterUser />
-      <LoginUser />
-      <GetUser />
-      <LogoutButton />
+      <Route path="/login" render={(props) => <LoginUser {...props} />} />
+      <Route path="/register" render={(props) => <RegisterUser {...props} />} />
     </>
   );
 }

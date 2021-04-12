@@ -9,7 +9,7 @@ const expressSession = require("express-session");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const uuid = require("uuid");
-const { database } = require("./database/database").database;
+const database = require("./database/database").database;
 
 const server = express();
 server.use(helmet());
@@ -23,10 +23,6 @@ server.use(
     saveUninitialized: true,
   })
 );
-server.use(cookieParser(process.env.SECRET));
-server.use(passport.initialize());
-server.use(passport.session());
-require("./passportConfig")(passport);
 
 server.get("/", (req, res) => {
   database.query("select * from users;", (err, table) => {
@@ -39,14 +35,17 @@ server.get("/", (req, res) => {
   });
 });
 
-server.post(
-  "/login",
-  passport.authenticate("local", {
-    successRedirect: "/dashboard",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })
-);
+// *****LOGIN CONFIG HERE*****
+server.use(cookieParser(process.env.SECRET));
+server.use(passport.initialize());
+server.use(passport.session());
+require("./passportConfig")(passport);
+
+// *****LOGIN ROUTE HERE*****
+server.post("/login", passport.authenticate("local"), (req, res) => {
+  res.status(200).json(req.user);
+  return console.log("Passport Authentication Complete");
+});
 
 server.post("/register", (req, res) => {
   const hashedPsw = bcrypt.hashSync(req.body.password, 10);
@@ -64,7 +63,12 @@ server.post("/register", (req, res) => {
           .then((t) => {
             res.json(t.rows[0]);
           })
-          .catch((err) => res.json(err.detail));
+          .catch((err) =>
+            res.json({
+              error: err,
+              message: "Username/Email already in use.",
+            })
+          );
       } else {
         return res.json({ message: "User already exists" });
       }
@@ -73,8 +77,11 @@ server.post("/register", (req, res) => {
 });
 
 server.get("/user", (req, res) => {
-  console.log(req.body);
-  res.json(req.body);
+  if (req.user) {
+    return res.status(200).json(req.user);
+  } else {
+    return res.status(200).json({ message: "No user signed in." });
+  }
 });
 
 server.listen(4000, () => {

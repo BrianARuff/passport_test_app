@@ -7,7 +7,7 @@ type IUserData = {
   password: string;
 };
 
-function LoginUser() {
+function LoginUser(props: any) {
   const [userData, setUserData] = useState<IUserData>({
     username: "",
     password: "",
