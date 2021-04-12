@@ -49,7 +49,7 @@ function LoginUser(props: any) {
         onChange={handleUserData}
         required
       />
-      <button onClick={handleSubmitUserData}>Login User</button>
+      <button onClick={handleSubmitUserData}>Login Your Account</button>
     </form>
   );
 }

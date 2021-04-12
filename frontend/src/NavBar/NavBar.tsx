@@ -4,7 +4,8 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
-import { Link } from "react-router-dom";
+import Link from "@material-ui/core/Link";
+import { Link as RouteLink } from "react-router-dom";
 
 export default function NavBar() {
   return (
@@ -22,7 +23,16 @@ export default function NavBar() {
           <Typography style={{ flex: "1", margin: "0 auto" }} variant="h6">
             News
           </Typography>
-          <Button color="inherit">Login</Button>
+          <Button color="inherit">
+            <Link color="inherit" to="/login" component={RouteLink}>
+              Login
+            </Link>
+          </Button>
+          <Button color="inherit">
+            <Link color="inherit" to="/register" component={RouteLink}>
+              Register
+            </Link>
+          </Button>
         </Toolbar>
       </AppBar>
     </div>
