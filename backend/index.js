@@ -61,14 +61,14 @@ server.post("/register", (req, res) => {
             [req.body.username, hashedPsw, req.body.email]
           )
           .then((t) => {
-            res.json(t.rows[0]);
+            return res.json(t.rows[0]);
           })
-          .catch((err) =>
-            res.json({
+          .catch((err) => {
+            return res.json({
               error: err,
               message: "Username/Email already in use.",
-            })
-          );
+            });
+          });
       } else {
         return res.json({ message: "User already exists" });
       }
@@ -76,12 +76,17 @@ server.post("/register", (req, res) => {
   );
 });
 
-server.get("/user", (req, res) => {
-  if (req.user) {
-    return res.status(200).json(req.user);
-  } else {
-    return res.status(200).json({ message: "No user signed in." });
-  }
+server.post("/user", (req, res) => {
+  database.query(
+    "select * from users where users.username = $1 and users.id = $2",
+    [req.body.username, req.body.id],
+    (err, table) => {
+      if (err) throw err;
+      if (table.rowCount < 1) return res.status(200).json(0);
+      const { username, email, id } = table.rows[0];
+      res.status(200).json({ username, email, id });
+    }
+  );
 });
 
 server.listen(4000, () => {

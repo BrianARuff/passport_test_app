@@ -6,8 +6,9 @@ import IconButton from "@material-ui/core/IconButton";
 import MenuIcon from "@material-ui/icons/Menu";
 import Link from "@material-ui/core/Link";
 import { Link as RouteLink } from "react-router-dom";
+import LogoutButton from "../Logout/Logout";
 
-export default function NavBar() {
+export default function NavBar(props: any) {
   return (
     <div style={{ flex: "1" }}>
       <AppBar position="static">
@@ -25,16 +26,22 @@ export default function NavBar() {
               News
             </RouteLink>
           </Typography>
-          <Button color="inherit">
-            <Link color="inherit" to="/login" component={RouteLink}>
-              Login
-            </Link>
-          </Button>
-          <Button color="inherit">
-            <Link color="inherit" to="/register" component={RouteLink}>
-              Register
-            </Link>
-          </Button>
+          {props.validUser ? (
+            <LogoutButton color="secondary" setValidUser={props.setValidUser} />
+          ) : (
+            <div>
+              <Button color="inherit">
+                <Link color="inherit" to="/login" component={RouteLink}>
+                  Login
+                </Link>
+              </Button>
+              <Button color="inherit">
+                <Link color="inherit" to="/register" component={RouteLink}>
+                  Register
+                </Link>
+              </Button>
+            </div>
+          )}
         </Toolbar>
       </AppBar>
     </div>

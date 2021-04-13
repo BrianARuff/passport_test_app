@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useCookies } from "react-cookie";
+import { Cookies, useCookies } from "react-cookie";
+import { Typography } from "@material-ui/core";
+import LogoutButton from "../Logout/Logout";
 
 type IUserData = {
   username: string;
@@ -20,6 +22,7 @@ function LoginUser(props: any) {
 
   function handleSubmitUserData(e: React.BaseSyntheticEvent) {
     e.preventDefault();
+    const cookies = new Cookies();
     axios({
       method: "POST",
       data: { ...userData },
@@ -29,28 +32,56 @@ function LoginUser(props: any) {
       .then((res) => {
         const { username, email, id } = res.data;
         setCookie("user", { username, email, id });
+        console.log(res.data.username, cookies.get("user").username);
+        if (res.data.username === cookies.get("user").username) {
+          props.setValidUser(true);
+        } else {
+          props.setValidUser(false);
+        }
       })
       .catch((err) => console.error(err));
   }
   return (
-    <form>
-      <h4>Login</h4>
-      <input
-        name="username"
-        type="text"
-        placeholder="username"
-        onChange={handleUserData}
-        required
-      />
-      <input
-        type="password"
-        name="password"
-        placeholder="password"
-        onChange={handleUserData}
-        required
-      />
-      <button onClick={handleSubmitUserData}>Login Your Account</button>
-    </form>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {props.validUser ? (
+        <div>
+          <Typography variant="h4" component="h4">
+            You are already Logged In
+          </Typography>
+          <LogoutButton
+            setValidUser={props.setValidUser}
+            to="/login"
+            color="secondary"
+          />
+        </div>
+      ) : (
+        <form>
+          <h4>Login</h4>
+          <input
+            name="username"
+            type="text"
+            placeholder="username"
+            onChange={handleUserData}
+            required
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="password"
+            onChange={handleUserData}
+            required
+          />
+          <button onClick={handleSubmitUserData}>Login Your Account</button>
+        </form>
+      )}
+    </div>
   );
 }
 

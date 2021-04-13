@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import axios from "axios";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
-import { useCookies } from "react-cookie";
+import { useCookies, withCookies } from "react-cookie";
+import Typography from "@material-ui/core/Typography";
+import Input from "@material-ui/core/Input";
+import Button from "@material-ui/core/Button";
 
 type IUserData = {
   username: string;
@@ -51,39 +54,75 @@ function RegisterUser(props: any) {
 
     setTimeout(() => {
       setError({ hasError: false, message: "", errorObject: {} });
-    }, 5000);
+    }, 3000);
   }
 
   return (
-    <>
-      <form>
-        <h4>Register</h4>
-        <input
-          name="username"
-          type="text"
-          placeholder="username"
-          onChange={handleUserData}
-          required
-        />
-        <input
-          type="password"
-          name="password"
-          placeholder="password"
-          onChange={handleUserData}
-          required
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="email"
-          onChange={handleUserData}
-          required
-        />
-        <button onClick={handleSubmitUserData}>Register User</button>
+    <div>
+      <form
+        style={{
+          display: "flex",
+          flexFlow: "column wrap",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "1.25rem auto",
+          width: "500px",
+        }}
+      >
+        {error.hasError ? <ErrorMessage error={error} /> : null}
+        <Typography variant="h2" component="h2">
+          Register
+        </Typography>
+        <div>
+          <Input
+            name="username"
+            type="text"
+            placeholder="Enter your username here..."
+            onChange={handleUserData}
+            required
+            style={{
+              width: "500px",
+            }}
+          />
+        </div>
+        <div>
+          <Input
+            type="password"
+            name="password"
+            placeholder="Type in your password here..."
+            onChange={handleUserData}
+            required
+            style={{
+              width: "500px",
+            }}
+          />
+        </div>
+        <div>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Insert your email address here..."
+            onChange={handleUserData}
+            required
+            style={{
+              width: "500px",
+            }}
+          />
+        </div>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={handleSubmitUserData}
+          style={{
+            margin: "1.25rem",
+            width: "500px",
+          }}
+        >
+          Register User
+        </Button>
       </form>
-      {error.hasError ? <ErrorMessage error={error} /> : null}
-    </>
+    </div>
   );
 }
 
-export default RegisterUser;
+export default withCookies(RegisterUser);
